@@ -115,6 +115,12 @@ public class SistemaRecomendacionPeliculas {
 
         gestionUsuarios.agregarUsuario(u1);
         gestionUsuarios.agregarUsuario(u2);
+        
+        // REGISTRAR PELÍCULA VISTA POR ANA
+        u1.getHistorial().push(
+                gestionPeliculas.buscarPorCodigo(1)
+        );
+   
 
 
         // =================================
@@ -125,5 +131,92 @@ public class SistemaRecomendacionPeliculas {
 
         gestionUsuarios.mostrarUsuarios();
 
+        
+        // =================================
+        // SISTEMA DE RECOMENDACIONES
+        // =================================
+
+        SistemaRecomendaciones sistema =
+                new SistemaRecomendaciones();
+
+        // Recomendaciones para Ana
+        sistema.recomendarPeliculas(
+                u1,
+                gestionPeliculas.getPeliculas(),
+                4.5
+        );
+
+        // Recomendaciones para Carlos
+        sistema.recomendarPeliculas(
+                u2,
+                gestionPeliculas.getPeliculas(),
+                4.5
+                
+        );
+
+        // =================================
+        // PRUEBAS DE MANEJO DE EXCEPCIONES
+        // =================================
+
+        System.out.println("\n===== PRUEBAS DE EXCEPCIONES =====");
+
+        // PRUEBA 1: Código repetido
+        try {
+            gestionPeliculas.agregarPelicula(
+                new Pelicula(1, "Avatar 2",
+                        "Ciencia ficción", 2022, 4.5)
+            );
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error controlado: " + e.getMessage());
+        }
+
+        // PRUEBA 2: Rating fuera del rango
+        try {
+            Pelicula peliculaIncorrecta =
+                new Pelicula(9, "Prueba", "Drama", 2020, 6.0);
+
+            gestionPeliculas.agregarPelicula(peliculaIncorrecta);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error controlado: " + e.getMessage());
+        }
+
+        // PRUEBA 3: Título vacío
+        try {
+            Pelicula peliculaIncorrecta =
+                new Pelicula(10, "", "Drama", 2020, 4.5);
+
+            gestionPeliculas.agregarPelicula(peliculaIncorrecta);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error controlado: " + e.getMessage());
+        }
+        
+        // PRUEBA 4: Usuario con ID repetido
+        try {
+            Usuario usuarioIncorrecto =
+                    new Usuario(1, "Pedro");
+
+            gestionUsuarios.agregarUsuario(usuarioIncorrecto);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error controlado: " + e.getMessage());
+        }
+
+        // PRUEBA 5: Usuario con nombre vacío
+        try {
+            Usuario usuarioIncorrecto =
+                    new Usuario(3, "");
+
+            gestionUsuarios.agregarUsuario(usuarioIncorrecto);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error controlado: " + e.getMessage());
+        }
+
     }
+    
 }
+
+
