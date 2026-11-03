@@ -1,4 +1,5 @@
 
+
 package sistemarecomendacionpeliculas;
 
 public class SistemaRecomendacionPeliculas {
@@ -87,12 +88,9 @@ public class SistemaRecomendacionPeliculas {
                 gestionPeliculas.buscarPorCodigoBinaria(codigoBuscar);
 
         if (encontrada != null) {
-
             System.out.println("Película encontrada:");
             System.out.println(encontrada);
-
         } else {
-
             System.out.println("No existe una película con ese código.");
         }
 
@@ -115,12 +113,11 @@ public class SistemaRecomendacionPeliculas {
 
         gestionUsuarios.agregarUsuario(u1);
         gestionUsuarios.agregarUsuario(u2);
-        
+
         // REGISTRAR PELÍCULA VISTA POR ANA
-        u1.getHistorial().push(
+        u1.registrarPeliculaVista(
                 gestionPeliculas.buscarPorCodigo(1)
         );
-   
 
 
         // =================================
@@ -131,7 +128,22 @@ public class SistemaRecomendacionPeliculas {
 
         gestionUsuarios.mostrarUsuarios();
 
-        
+
+        // =================================
+        // CREAR Y CARGAR EL ÁRBOL BST
+        // =================================
+
+        ArbolBST arbol = new ArbolBST();
+
+        arbol.cargarDesdeLista(
+                gestionPeliculas.getPeliculas()
+        );
+
+        System.out.println("\n===== PELÍCULAS EN EL ÁRBOL BST =====");
+
+        arbol.mostrarInorden();
+
+
         // =================================
         // SISTEMA DE RECOMENDACIONES
         // =================================
@@ -140,19 +152,78 @@ public class SistemaRecomendacionPeliculas {
                 new SistemaRecomendaciones();
 
         // Recomendaciones para Ana
-        sistema.recomendarPeliculas(
-                u1,
-                gestionPeliculas.getPeliculas(),
-                4.5
-        );
+        sistema.recomendarPeliculas(u1, arbol, 4.5);
 
         // Recomendaciones para Carlos
-        sistema.recomendarPeliculas(
-                u2,
-                gestionPeliculas.getPeliculas(),
-                4.5
-                
+        sistema.recomendarPeliculas(u2, arbol, 4.5);
+
+
+        // =================================
+        // PRUEBAS DE COLA Y PILA
+        // =================================
+
+        // Usuario independiente para las pruebas
+        Usuario prueba = new Usuario(3, "Usuario de prueba");
+
+
+        // =================================
+        // PRUEBA DE COLA (QUEUE)
+        // FIFO: PRIMERO EN ENTRAR,
+        // PRIMERO EN SALIR
+        // =================================
+
+        System.out.println("\n===== PRUEBA DE COLA (QUEUE) =====");
+
+        // Agregar películas a la cola
+        prueba.agregarPorVer(
+                gestionPeliculas.buscarPorCodigo(2)
         );
+
+        prueba.agregarPorVer(
+                gestionPeliculas.buscarPorCodigo(3)
+        );
+
+        prueba.agregarPorVer(
+                gestionPeliculas.buscarPorCodigo(5)
+        );
+
+        // Retirar películas en orden de llegada
+        System.out.println("Primera película en la cola:");
+        System.out.println(prueba.verSiguiente());
+
+        System.out.println("Segunda película en la cola:");
+        System.out.println(prueba.verSiguiente());
+
+        System.out.println("Tercera película en la cola:");
+        System.out.println(prueba.verSiguiente());
+
+
+        // =================================
+        // PRUEBA DE PILA (STACK)
+        // LIFO: ÚLTIMO EN ENTRAR,
+        // PRIMERO EN SALIR
+        // =================================
+
+        System.out.println("\n===== PRUEBA DE PILA (STACK) =====");
+
+        // Registrar películas como vistas
+        prueba.registrarPeliculaVista(
+                gestionPeliculas.buscarPorCodigo(1)
+        );
+
+        prueba.registrarPeliculaVista(
+                gestionPeliculas.buscarPorCodigo(4)
+        );
+
+        prueba.registrarPeliculaVista(
+                gestionPeliculas.buscarPorCodigo(6)
+        );
+
+        // Consultar la última película vista
+        System.out.println("Última película registrada como vista:");
+
+        System.out.println(prueba.obtenerUltimaVista());
+
 
         // =================================
         // PRUEBAS DE MANEJO DE EXCEPCIONES
@@ -192,7 +263,7 @@ public class SistemaRecomendacionPeliculas {
         } catch (IllegalArgumentException e) {
             System.out.println("Error controlado: " + e.getMessage());
         }
-        
+
         // PRUEBA 4: Usuario con ID repetido
         try {
             Usuario usuarioIncorrecto =
@@ -216,7 +287,4 @@ public class SistemaRecomendacionPeliculas {
         }
 
     }
-    
 }
-
-
