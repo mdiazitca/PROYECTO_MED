@@ -33,12 +33,18 @@ public class ArbolBST {
     // (por ejemplo, gestionPeliculas.getPeliculas())
     // =====================================
 
-    public void cargarDesdeLista(ArrayList<Pelicula> lista) {
+     public void cargarDesdeLista(ArrayList<Pelicula> lista) {
 
-        for (Pelicula p : lista) {
-            insertar(p);
-        }
+    if (lista == null) {
+        throw new IllegalArgumentException(
+            "La lista de películas no puede ser nula."
+        );
     }
+
+    for (Pelicula p : lista) {
+        insertar(p);
+    }
+}
 
     // =====================================
     // INSERTAR
@@ -122,6 +128,36 @@ public class ArbolBST {
     }
 
     // =====================================
+    // BÚSQUEDA PARCIAL POR TÍTULO
+    // Permite encontrar varias películas
+    // =====================================-------------------------------------------------------------------------------
+
+    public ArrayList<Pelicula> buscarPorCoincidencia(String texto) {
+
+        if (texto == null || texto.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "Debe ingresar una palabra para buscar."
+            );
+        }
+
+        ArrayList<Pelicula> resultados = new ArrayList<>();
+
+        String palabra = texto.trim().toLowerCase();
+
+        // Recorrer todas las películas del árbol
+        for (Pelicula p : recorridoInorden()) {
+
+            String titulo = p.getTitulo().toLowerCase();
+
+            if (titulo.contains(palabra)) {
+                resultados.add(p);
+            }
+        }
+
+        return resultados;
+    }
+//---------------------------------------------------------------------------------------------------------------
+    // =====================================
     // RECORRIDO IN-ORDEN
     // Devuelve las películas en orden alfabético
     // =====================================
@@ -140,6 +176,49 @@ public class ArbolBST {
             lista.add(nodo.pelicula);
             inordenRecursivo(nodo.derecho, lista);
         }
+    }
+
+    // =====================================
+    // RECOMENDACIONES: RECORRIDO RECURSIVO
+    // Recorre el árbol (izquierda, nodo, derecha) y guarda
+    // las películas que cumplen el género preferido del
+    // usuario, que no ha visto y con rating mínimo.
+    // =====================================
+
+    public ArrayList<Pelicula> buscarRecomendaciones(
+            Usuario usuario, double ratingMinimo) {
+
+        ArrayList<Pelicula> resultados = new ArrayList<>();
+        recomendacionesRecursivo(raiz, usuario, ratingMinimo, resultados);
+        return resultados;
+    }
+
+    private void recomendacionesRecursivo(
+            NodoBST nodo,
+            Usuario usuario,
+            double ratingMinimo,
+            ArrayList<Pelicula> resultados) {
+
+        // Caso base: nodo vacío
+        if (nodo == null) {
+            return;
+        }
+
+        // Subárbol izquierdo
+        recomendacionesRecursivo(nodo.izquierdo, usuario, ratingMinimo, resultados);
+
+        // Nodo actual
+        Pelicula p = nodo.pelicula;
+
+        if (usuario.prefiereGenero(p.getGenero())
+                && !usuario.yaVio(p)
+                && p.getRating() >= ratingMinimo) {
+
+            resultados.add(p);
+        }
+
+        // Subárbol derecho
+        recomendacionesRecursivo(nodo.derecho, usuario, ratingMinimo, resultados);
     }
 
     public void mostrarInorden() {

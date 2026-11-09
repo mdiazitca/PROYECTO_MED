@@ -51,12 +51,17 @@ public class Pelicula {
         this.anio = anio;
     }
 
-    public void setRating(double rating) {
-        if (rating < 1 || rating > 5) {
-            throw new IllegalArgumentException("El rating debe estar entre 1 y 5. Valor recibido: " + rating);
-        }
-        this.rating = rating;
+  public void setRating(double rating) {
+
+    if (!Double.isFinite(rating) || rating < 1 || rating > 5) {
+
+        throw new IllegalArgumentException(
+            "El rating debe ser un número entre 1 y 5."
+        );
     }
+
+    this.rating = rating;
+}
 
     @Override
     public String toString() {
