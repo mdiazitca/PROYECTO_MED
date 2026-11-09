@@ -8,8 +8,6 @@ package sistemarecomendacionpeliculas;
  *
  * @author liliq
  */
-
-
 import java.util.ArrayList;
 
 public class GestionPeliculas {
@@ -26,13 +24,13 @@ public class GestionPeliculas {
 
         if (pelicula == null) {
             throw new IllegalArgumentException(
-                "La película no puede ser nula."
+                    "La película no puede ser nula."
             );
         }
 
         if (buscarPorCodigo(pelicula.getCodigo()) != null) {
             throw new IllegalArgumentException(
-                "Ya existe una película con ese código."
+                    "Ya existe una película con ese código."
             );
         }
 
@@ -65,16 +63,15 @@ public class GestionPeliculas {
         return null;
     }
 
-    // Obtener lista de películas
+    // Obtener copia de la lista de películas
     public ArrayList<Pelicula> getPeliculas() {
-        return peliculas;
+        return new ArrayList<>(peliculas);
     }
-   
+
     // =====================================
     // BUBBLE SORT: ORDENAR POR RATING
     // De mayor a menor
     // =====================================
-
     public ArrayList<Pelicula> ordenarPorRating() {
 
         ArrayList<Pelicula> lista = new ArrayList<>(peliculas);
@@ -100,12 +97,10 @@ public class GestionPeliculas {
         return lista;
     }
 
-
     // =====================================
     // SELECTION SORT: ORDENAR POR AÑO
     // De menor a mayor
     // =====================================
-
     public ArrayList<Pelicula> ordenarPorAnio() {
 
         ArrayList<Pelicula> lista = new ArrayList<>(peliculas);
@@ -138,15 +133,14 @@ public class GestionPeliculas {
     // =====================================
     // BÚSQUEDA BINARIA POR CÓDIGO
     // =====================================
-
     public Pelicula buscarPorCodigoBinaria(int codigo) {
 
         // Crear una copia de las películas
         ArrayList<Pelicula> lista = new ArrayList<>(peliculas);
 
         // Ordenar la copia por código de menor a mayor
-        lista.sort((a, b) ->
-            Integer.compare(a.getCodigo(), b.getCodigo())
+        lista.sort((a, b)
+                -> Integer.compare(a.getCodigo(), b.getCodigo())
         );
 
         int inicio = 0;
@@ -172,6 +166,73 @@ public class GestionPeliculas {
 
         return null;
     }
- 
-}
+    // Obtener el último código utilizado
 
+    public int obtenerUltimoCodigoUtilizado() {
+
+        int ultimoCodigo = 0;
+
+        for (Pelicula pelicula : peliculas) {
+
+            if (pelicula.getCodigo() > ultimoCodigo) {
+                ultimoCodigo = pelicula.getCodigo();
+            }
+        }
+
+        return ultimoCodigo;
+    }
+
+    public void mostrarPeliculasEnTabla() {
+
+        System.out.println("\n================ CATÁLOGO DE PELÍCULAS ================");
+
+        System.out.printf("%-8s %-25s %-18s %-8s %-8s%n",
+                "Código", "Título", "Género", "Año", "Rating");
+
+        System.out.println("---------------------------------------------------------------------");
+
+        for (Pelicula p : peliculas) {
+
+            System.out.printf("%-8d %-25s %-18s %-8d %-8.1f%n",
+                    p.getCodigo(),
+                    p.getTitulo(),
+                    p.getGenero(),
+                    p.getAnio(),
+                    p.getRating());
+        }
+
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println("Total de películas: " + peliculas.size());
+    }
+
+    public void mostrarPeliculasEnTabla(ArrayList<Pelicula> lista) {
+
+        System.out.printf("%-8s %-25s %-18s %-8s %-8s%n",
+                "Código", "Título", "Género", "Año", "Rating");
+
+        System.out.println("---------------------------------------------------------------------");
+
+        for (Pelicula p : lista) {
+            System.out.printf("%-8d %-25s %-18s %-8d %-8.1f%n",
+                    p.getCodigo(),
+                    p.getTitulo(),
+                    p.getGenero(),
+                    p.getAnio(),
+                    p.getRating());
+        }
+
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println("Total de películas: " + lista.size());
+    }
+    public void mostrarPeliculasOrdenadasPorTitulo() {
+
+    ArrayList<Pelicula> listaOrdenada =
+            new ArrayList<>(peliculas);
+
+    listaOrdenada.sort(
+        (a, b) -> a.getTitulo().compareToIgnoreCase(b.getTitulo())
+    );
+
+    mostrarPeliculasEnTabla(listaOrdenada);
+}
+}
