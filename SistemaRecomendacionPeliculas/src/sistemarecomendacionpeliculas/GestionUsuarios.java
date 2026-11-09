@@ -66,7 +66,7 @@
 
         // Obtener lista de usuarios
         public ArrayList<Usuario> getUsuarios() {
-            return usuarios;
+        return new ArrayList<>(usuarios);
         }
     }
 

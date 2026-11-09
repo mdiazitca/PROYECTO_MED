@@ -2,52 +2,102 @@ package sistemarecomendacionpeliculas;
 
 import java.util.Scanner;
 import java.util.Queue;
+import java.util.ArrayList;
 
 public class SistemaRecomendacionPeliculas {
 
     public static void main(String[] args) {
+        System.setOut(new java.io.PrintStream(
+                new java.io.FileOutputStream(
+                        java.io.FileDescriptor.out
+                ),
+                true,
+                java.nio.charset.StandardCharsets.UTF_8
+        ));
 
         Scanner sc = new Scanner(System.in);
 
         // =================================
         // REGISTRO INICIAL DE PELÍCULAS
         // =================================
+        GestionPeliculas gestionPeliculas
+                = new GestionPeliculas();
+        ArchivoPeliculas archivoPeliculas = new ArchivoPeliculas();
 
-        GestionPeliculas gestionPeliculas =
-                new GestionPeliculas();
+        String nombreArchivo = "peliculas.txt";
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(1, "Interestelar", "Ciencia ficción", 2014, 4.9));
+        try {
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(2, "Titanic", "Romance", 1997, 4.5));
+            ArrayList<Pelicula> peliculasGuardadas
+                    = archivoPeliculas.cargarPeliculas(nombreArchivo);
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(3, "El origen", "Ciencia ficción", 2010, 4.8));
+            if (!peliculasGuardadas.isEmpty()) {
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(4, "Toy Story", "Animación", 1995, 4.6));
+                for (Pelicula pelicula : peliculasGuardadas) {
+                    gestionPeliculas.agregarPelicula(pelicula);
+                }
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(5, "Avatar", "Ciencia ficción", 2009, 4.7));
+                System.out.println("Películas cargadas correctamente.");
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(6, "Coco", "Animación", 2017, 4.8));
+            } else {
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(7, "El conjuro", "Terror", 2013, 4.3));
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(1, "Interestelar", "Ciencia ficción", 2014, 4.9));
 
-        gestionPeliculas.agregarPelicula(
-            new Pelicula(8, "En busca de la felicidad",
-                    "Drama", 2006, 4.7));
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(2, "Titanic", "Romance", 1997, 4.5));
 
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(3, "El origen", "Ciencia ficción", 2010, 4.8));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(4, "Toy Story", "Animación", 1995, 4.6));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(5, "Avatar", "Ciencia ficción", 2009, 4.7));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(6, "Coco", "Animación", 2017, 4.8));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(7, "El conjuro", "Terror", 2013, 4.3));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(8, "En busca de la felicidad",
+                                "Drama", 2006, 4.7));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(9, "Cenicineta", "Animacion", 2016, 7.3));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(10, "Cenicienta II", "Animacion", 2021, 6.3));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(11, "Cenicienta III", "Animacion", 2025, 8.2));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(12, "Bambi", "Animacion", 2025, 6.2));
+
+                gestionPeliculas.agregarPelicula(
+                        new Pelicula(13, "Bambi II", "Animacion", 2025, 4.2));
+
+                archivoPeliculas.guardarPeliculas(
+                        gestionPeliculas.getPeliculas(), nombreArchivo);
+
+                System.out.println("Catálogo inicial guardado.");
+
+            }
+
+        } catch (java.io.IOException e) {
+
+            System.out.println("Error al cargar o guardar películas: " + e.getMessage());
+        }
 
         // =================================
         // REGISTRO INICIAL DE USUARIOS
         // =================================
-
-        GestionUsuarios gestionUsuarios =
-                new GestionUsuarios();
+        GestionUsuarios gestionUsuarios
+                = new GestionUsuarios();
 
         Usuario u1 = new Usuario(1, "Ana");
         Usuario u2 = new Usuario(2, "Carlos");
@@ -66,25 +116,22 @@ public class SistemaRecomendacionPeliculas {
                 gestionPeliculas.buscarPorCodigo(1)
         );
 
-
         // =================================
         // CREAR ÁRBOL BST
         // =================================
-
         ArbolBST arbol = new ArbolBST();
 
         arbol.cargarDesdeLista(
                 gestionPeliculas.getPeliculas()
         );
 
-        SistemaRecomendaciones sistema =
-                new SistemaRecomendaciones();
+        SistemaRecomendaciones sistema
+                = new SistemaRecomendaciones();
 
-
+        //------------------------------------------------------------------------------------
         // =================================
         // MENÚ PRINCIPAL
         // =================================
-
         int opcion;
 
         do {
@@ -116,53 +163,38 @@ public class SistemaRecomendacionPeliculas {
                 // =================================
                 // 1. MOSTRAR PELÍCULAS
                 // =================================
-
                 case 1:
-
-                    System.out.println("\n===== PELÍCULAS REGISTRADAS =====");
-                    gestionPeliculas.mostrarPeliculas();
-
+                    gestionPeliculas.mostrarPeliculasOrdenadasPorTitulo();
                     break;
-
 
                 // =================================
                 // 2. REGISTRAR PELÍCULA
                 // =================================
-
                 case 2:
 
-                    try {
+                    String continuar;
 
-                        int codigo = leerEntero(sc, "Código: ");
-
-                        System.out.print("Título: ");
-                        String titulo = sc.nextLine();
-
-                        System.out.print("Género: ");
-                        String genero = sc.nextLine();
-
-                        int anio = leerEntero(sc, "Año: ");
-
-                        double rating = leerDouble(sc, "Rating (1 a 5): ");
-
-                        // Comprobar título repetido en el BST
-                        boolean existeTitulo = false;
+                    do {
 
                         try {
-                            arbol.buscarPorTitulo(titulo);
-                            existeTitulo = true;
 
-                        } catch (PeliculaNoEncontradaException e) {
-                            // El título todavía no existe
-                        }
+                            int ultimoCodigo
+                                    = gestionPeliculas.obtenerUltimoCodigoUtilizado();
 
-                        if (existeTitulo) {
+                            System.out.println("\nÚltimo código utilizado: " + ultimoCodigo);
 
-                            System.out.println(
-                                "Ya existe una película con ese título."
-                            );
+                            int codigo = leerEntero(
+                                    sc, "Ingrese el código de la nueva película: ");
 
-                        } else {
+                            System.out.print("Título: ");
+                            String titulo = sc.nextLine();
+
+                            System.out.print("Género: ");
+                            String genero = sc.nextLine();
+
+                            int anio = leerEntero(sc, "Año: ");
+
+                            double rating = leerDouble(sc, "Rating (1 a 10): ");
 
                             Pelicula nueva = new Pelicula(
                                     codigo, titulo, genero, anio, rating
@@ -170,32 +202,47 @@ public class SistemaRecomendacionPeliculas {
 
                             gestionPeliculas.agregarPelicula(nueva);
 
-                            // Actualizar el BST
+// Guardar automáticamente todas las películas
+                            try {
+
+                                archivoPeliculas.guardarPeliculas(
+                                        gestionPeliculas.getPeliculas(),
+                                        nombreArchivo
+                                );
+
+                                System.out.println("Catálogo guardado correctamente.");
+
+                            } catch (java.io.IOException e) {
+
+                                System.out.println(
+                                        "Error al guardar las películas: " + e.getMessage()
+                                );
+                            }
+
+// Actualizar el árbol BST
                             arbol = new ArbolBST();
 
                             arbol.cargarDesdeLista(
                                     gestionPeliculas.getPeliculas()
                             );
 
-                            System.out.println(
-                                "Película registrada correctamente."
-                            );
+                            System.out.println("\nPelícula registrada correctamente.");
+
+                            System.out.print("\n¿Desea registrar otra película? (S/N): ");
+                            continuar = sc.nextLine().trim();
+
+                        } catch (IllegalArgumentException e) {
+
+                            System.out.println("Error: " + e.getMessage());
+                            continuar = "N";
                         }
 
-                    } catch (IllegalArgumentException e) {
-
-                        System.out.println(
-                            "Error: " + e.getMessage()
-                        );
-                    }
+                    } while (continuar.equalsIgnoreCase("S"));
 
                     break;
-
-
                 // =================================
                 // 3. MOSTRAR USUARIOS
                 // =================================
-
                 case 3:
 
                     System.out.println("\n===== USUARIOS REGISTRADOS =====");
@@ -203,11 +250,9 @@ public class SistemaRecomendacionPeliculas {
 
                     break;
 
-
                 // =================================
                 // 4. REGISTRAR USUARIO
                 // =================================
-
                 case 4:
 
                     try {
@@ -217,19 +262,19 @@ public class SistemaRecomendacionPeliculas {
                         System.out.print("Nombre: ");
                         String nombre = sc.nextLine();
 
-                        Usuario nuevoUsuario =
-                                new Usuario(id, nombre);
+                        Usuario nuevoUsuario
+                                = new Usuario(id, nombre);
 
                         System.out.print(
-                            "Géneros preferidos separados por coma: "
+                                "Géneros preferidos separados por coma: "
                         );
 
                         String entradaGeneros = sc.nextLine();
 
                         if (!entradaGeneros.trim().isEmpty()) {
 
-                            String[] generos =
-                                    entradaGeneros.split(",");
+                            String[] generos
+                                    = entradaGeneros.split(",");
 
                             for (String genero : generos) {
                                 nuevoUsuario.agregarGenero(genero);
@@ -239,121 +284,117 @@ public class SistemaRecomendacionPeliculas {
                         gestionUsuarios.agregarUsuario(nuevoUsuario);
 
                         System.out.println(
-                            "Usuario registrado correctamente."
+                                "Usuario registrado correctamente."
                         );
 
                     } catch (IllegalArgumentException e) {
 
                         System.out.println(
-                            "Error: " + e.getMessage()
+                                "Error: " + e.getMessage()
                         );
                     }
 
                     break;
-
 
                 // =================================
                 // 5. ORDENAR POR RATING
                 // =================================
-
                 case 5:
+                    System.out.println("\n===== PELÍCULAS ORDENADAS POR RATING =====");
 
-                    System.out.println("\n===== ORDENADAS POR RATING =====");
-
-                    for (Pelicula p :
-                            gestionPeliculas.ordenarPorRating()) {
-
-                        System.out.println(p);
-                    }
+                    gestionPeliculas.mostrarPeliculasEnTabla(
+                            gestionPeliculas.ordenarPorRating()
+                    );
 
                     break;
-
 
                 // =================================
                 // 6. ORDENAR POR AÑO
                 // =================================
-
                 case 6:
 
-                    System.out.println("\n===== ORDENADAS POR AÑO =====");
+                    System.out.println("\n===== PELÍCULAS ORDENADAS POR AÑO =====");
 
-                    for (Pelicula p :
-                            gestionPeliculas.ordenarPorAnio()) {
-
-                        System.out.println(p);
-                    }
+                    gestionPeliculas.mostrarPeliculasEnTabla(
+                            gestionPeliculas.ordenarPorAnio()
+                    );
 
                     break;
-
 
                 // =================================
                 // 7. BÚSQUEDA BINARIA POR CÓDIGO
                 // =================================
-
                 case 7:
 
-                    int codigoBuscar =
-                            leerEntero(sc, "Ingrese el código: ");
+                    System.out.println("\n===== BUSCAR PELÍCULA POR CÓDIGO =====");
 
-                    Pelicula encontrada =
-                            gestionPeliculas.buscarPorCodigoBinaria(
-                                    codigoBuscar
-                            );
+                    int codigoBuscar = leerEntero(sc, "Ingrese el código de la película: ");
+
+                    Pelicula encontrada = gestionPeliculas.buscarPorCodigo(codigoBuscar);
 
                     if (encontrada != null) {
 
-                        System.out.println("Película encontrada:");
-                        System.out.println(encontrada);
+                        System.out.println("\nPelícula encontrada:");
+
+                        ArrayList<Pelicula> resultado = new ArrayList<>();
+                        resultado.add(encontrada);
+
+                        gestionPeliculas.mostrarPeliculasEnTabla(resultado);
 
                     } else {
 
-                        System.out.println(
-                            "No existe una película con ese código."
-                        );
+                        System.out.println("No se encontró ninguna película con ese código.");
                     }
 
                     break;
 
-
+                //--------------------------------------------------------------------------------------------------------------
                 // =================================
-                // 8. BÚSQUEDA POR TÍTULO EN BST
+                // 8. BÚSQUEDA PARCIAL POR TÍTULO
                 // =================================
-
                 case 8:
 
-                    System.out.print("Ingrese el título: ");
-                    String tituloBuscar = sc.nextLine();
+                    System.out.println("\n===== BUSCAR PELÍCULA POR TÍTULO =====");
+
+                    System.out.print("Ingrese el título o una palabra: ");
+                    String texto = sc.nextLine();
 
                     try {
 
-                        Pelicula resultado =
-                                arbol.buscarPorTitulo(tituloBuscar);
+                        ArrayList<Pelicula> resultados
+                                = arbol.buscarPorCoincidencia(texto);
 
-                        System.out.println("Película encontrada:");
-                        System.out.println(resultado);
+                        if (resultados.isEmpty()) {
 
-                    } catch (PeliculaNoEncontradaException |
-                             IllegalArgumentException e) {
+                            System.out.println("No se encontraron películas.");
 
-                        System.out.println(
-                            "Error: " + e.getMessage()
-                        );
+                        } else {
+
+                            System.out.println("\nPelículas encontradas:");
+
+                            gestionPeliculas.mostrarPeliculasEnTabla(resultados);
+
+                        }
+
+                    } catch (IllegalArgumentException e) {
+
+                        System.out.println("Error: " + e.getMessage());
+
                     }
 
                     break;
-
+//----------------------------------------------------------------------------------------------------------------------
 
                 // =================================
                 // 9. AGREGAR A COLA POR VER
                 // =================================
-
                 case 9:
 
-                    int idCola =
-                            leerEntero(sc, "ID del usuario: ");
+                    int idCola
+                            = leerEntero(sc, "ID del usuario: ");
 
-                    Usuario usuarioCola =
-                            gestionUsuarios.buscarPorId(idCola);
+                    Usuario usuarioCola
+                            = gestionUsuarios.buscarPorId(idCola);
 
                     if (usuarioCola == null) {
 
@@ -362,11 +403,11 @@ public class SistemaRecomendacionPeliculas {
                         break;
                     }
 
-                    int codigoCola =
-                            leerEntero(sc, "Código de película: ");
+                    int codigoCola
+                            = leerEntero(sc, "Código de película: ");
 
-                    Pelicula peliculaCola =
-                            gestionPeliculas.buscarPorCodigo(codigoCola);
+                    Pelicula peliculaCola
+                            = gestionPeliculas.buscarPorCodigo(codigoCola);
 
                     if (peliculaCola == null) {
 
@@ -380,30 +421,28 @@ public class SistemaRecomendacionPeliculas {
                         usuarioCola.agregarPorVer(peliculaCola);
 
                         System.out.println(
-                            "Película agregada a la lista por ver."
+                                "Película agregada a la lista por ver."
                         );
 
                     } catch (IllegalArgumentException e) {
 
                         System.out.println(
-                            "Error: " + e.getMessage()
+                                "Error: " + e.getMessage()
                         );
                     }
 
                     break;
 
-
                 // =================================
                 // 10. MOSTRAR COLA
                 // =================================
-
                 case 10:
 
-                    int idPendiente =
-                            leerEntero(sc, "ID del usuario: ");
+                    int idPendiente
+                            = leerEntero(sc, "ID del usuario: ");
 
-                    Usuario usuarioPendiente =
-                            gestionUsuarios.buscarPorId(idPendiente);
+                    Usuario usuarioPendiente
+                            = gestionUsuarios.buscarPorId(idPendiente);
 
                     if (usuarioPendiente == null) {
 
@@ -414,13 +453,13 @@ public class SistemaRecomendacionPeliculas {
 
                     System.out.println("\n===== PELÍCULAS POR VER =====");
 
-                    Queue<Pelicula> cola =
-                            usuarioPendiente.getPorVer();
+                    Queue<Pelicula> cola
+                            = usuarioPendiente.getPorVer();
 
                     if (cola.isEmpty()) {
 
                         System.out.println(
-                            "No hay películas pendientes."
+                                "No hay películas pendientes."
                         );
 
                     } else {
@@ -432,18 +471,16 @@ public class SistemaRecomendacionPeliculas {
 
                     break;
 
-
                 // =================================
                 // 11. MARCAR SIGUIENTE COMO VISTA
                 // =================================
-
                 case 11:
 
-                    int idSiguiente =
-                            leerEntero(sc, "ID del usuario: ");
+                    int idSiguiente
+                            = leerEntero(sc, "ID del usuario: ");
 
-                    Usuario usuarioSiguiente =
-                            gestionUsuarios.buscarPorId(idSiguiente);
+                    Usuario usuarioSiguiente
+                            = gestionUsuarios.buscarPorId(idSiguiente);
 
                     if (usuarioSiguiente == null) {
 
@@ -452,13 +489,13 @@ public class SistemaRecomendacionPeliculas {
                         break;
                     }
 
-                    Pelicula siguiente =
-                            usuarioSiguiente.verSiguiente();
+                    Pelicula siguiente
+                            = usuarioSiguiente.verSiguiente();
 
                     if (siguiente == null) {
 
                         System.out.println(
-                            "No hay películas pendientes."
+                                "No hay películas pendientes."
                         );
 
                     } else {
@@ -466,7 +503,7 @@ public class SistemaRecomendacionPeliculas {
                         usuarioSiguiente.registrarPeliculaVista(siguiente);
 
                         System.out.println(
-                            "Película registrada en el historial:"
+                                "Película registrada en el historial:"
                         );
 
                         System.out.println(siguiente);
@@ -474,18 +511,16 @@ public class SistemaRecomendacionPeliculas {
 
                     break;
 
-
                 // =================================
                 // 12. REGISTRAR PELÍCULA VISTA
                 // =================================
-
                 case 12:
 
-                    int idVista =
-                            leerEntero(sc, "ID del usuario: ");
+                    int idVista
+                            = leerEntero(sc, "ID del usuario: ");
 
-                    Usuario usuarioVista =
-                            gestionUsuarios.buscarPorId(idVista);
+                    Usuario usuarioVista
+                            = gestionUsuarios.buscarPorId(idVista);
 
                     if (usuarioVista == null) {
 
@@ -494,11 +529,11 @@ public class SistemaRecomendacionPeliculas {
                         break;
                     }
 
-                    int codigoVista =
-                            leerEntero(sc, "Código de película: ");
+                    int codigoVista
+                            = leerEntero(sc, "Código de película: ");
 
-                    Pelicula peliculaVista =
-                            gestionPeliculas.buscarPorCodigo(codigoVista);
+                    Pelicula peliculaVista
+                            = gestionPeliculas.buscarPorCodigo(codigoVista);
 
                     if (peliculaVista == null) {
 
@@ -514,30 +549,28 @@ public class SistemaRecomendacionPeliculas {
                         );
 
                         System.out.println(
-                            "Película agregada al historial."
+                                "Película agregada al historial."
                         );
 
                     } catch (IllegalArgumentException e) {
 
                         System.out.println(
-                            "Error: " + e.getMessage()
+                                "Error: " + e.getMessage()
                         );
                     }
 
                     break;
 
-
                 // =================================
                 // 13. MOSTRAR HISTORIAL
                 // =================================
-
                 case 13:
 
-                    int idHistorial =
-                            leerEntero(sc, "ID del usuario: ");
+                    int idHistorial
+                            = leerEntero(sc, "ID del usuario: ");
 
-                    Usuario usuarioHistorial =
-                            gestionUsuarios.buscarPorId(idHistorial);
+                    Usuario usuarioHistorial
+                            = gestionUsuarios.buscarPorId(idHistorial);
 
                     if (usuarioHistorial == null) {
 
@@ -547,7 +580,7 @@ public class SistemaRecomendacionPeliculas {
                     }
 
                     System.out.println(
-                        "\n===== HISTORIAL DE PELÍCULAS VISTAS ====="
+                            "\n===== HISTORIAL DE PELÍCULAS VISTAS ====="
                     );
 
                     if (usuarioHistorial.getHistorial().isEmpty()) {
@@ -557,30 +590,28 @@ public class SistemaRecomendacionPeliculas {
                     } else {
 
                         // Mostrar primero la más reciente
-                        for (int i =
-                                usuarioHistorial.getHistorial().size() - 1;
-                             i >= 0; i--) {
+                        for (int i
+                                = usuarioHistorial.getHistorial().size() - 1;
+                                i >= 0; i--) {
 
                             System.out.println(
-                                usuarioHistorial.getHistorial().get(i)
+                                    usuarioHistorial.getHistorial().get(i)
                             );
                         }
                     }
 
                     break;
 
-
                 // =================================
                 // 14. GENERAR RECOMENDACIONES
                 // =================================
-
                 case 14:
 
-                    int idRecomendacion =
-                            leerEntero(sc, "ID del usuario: ");
+                    int idRecomendacion
+                            = leerEntero(sc, "ID del usuario: ");
 
-                    Usuario usuarioRecomendacion =
-                            gestionUsuarios.buscarPorId(idRecomendacion);
+                    Usuario usuarioRecomendacion
+                            = gestionUsuarios.buscarPorId(idRecomendacion);
 
                     if (usuarioRecomendacion == null) {
 
@@ -589,8 +620,8 @@ public class SistemaRecomendacionPeliculas {
                         break;
                     }
 
-                    double minimo =
-                            leerDouble(sc, "Rating mínimo (1 a 5): ");
+                    double minimo
+                            = leerDouble(sc, "Rating mínimo (1 a 10): ");
 
                     try {
 
@@ -603,34 +634,30 @@ public class SistemaRecomendacionPeliculas {
                     } catch (IllegalArgumentException e) {
 
                         System.out.println(
-                            "Error: " + e.getMessage()
+                                "Error: " + e.getMessage()
                         );
                     }
 
                     break;
 
-
                 // =================================
                 // 15. SALIR
                 // =================================
-
                 case 15:
 
                     System.out.println(
-                        "Gracias por utilizar el sistema."
+                            "Gracias por utilizar el sistema."
                     );
 
                     break;
 
-
                 // =================================
                 // OPCIÓN INCORRECTA
                 // =================================
-
                 default:
 
                     System.out.println(
-                        "Opción inválida. Intente nuevamente."
+                            "Opción inválida. Intente nuevamente."
                     );
             }
 
@@ -639,11 +666,9 @@ public class SistemaRecomendacionPeliculas {
         sc.close();
     }
 
-
     // =================================
     // LEER NÚMEROS ENTEROS
     // =================================
-
     public static int leerEntero(
             Scanner sc, String mensaje) {
 
@@ -658,17 +683,15 @@ public class SistemaRecomendacionPeliculas {
             } catch (NumberFormatException e) {
 
                 System.out.println(
-                    "Debe ingresar un número entero válido."
+                        "Debe ingresar un número entero válido."
                 );
             }
         }
     }
 
-
     // =================================
     // LEER NÚMEROS DECIMALES
     // =================================
-
     public static double leerDouble(
             Scanner sc, String mensaje) {
 
@@ -685,7 +708,7 @@ public class SistemaRecomendacionPeliculas {
             } catch (NumberFormatException e) {
 
                 System.out.println(
-                    "Debe ingresar un número válido."
+                        "Debe ingresar un número válido."
                 );
             }
         }

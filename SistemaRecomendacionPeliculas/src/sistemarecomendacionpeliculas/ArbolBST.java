@@ -33,12 +33,18 @@ public class ArbolBST {
     // (por ejemplo, gestionPeliculas.getPeliculas())
     // =====================================
 
-    public void cargarDesdeLista(ArrayList<Pelicula> lista) {
+     public void cargarDesdeLista(ArrayList<Pelicula> lista) {
 
-        for (Pelicula p : lista) {
-            insertar(p);
-        }
+    if (lista == null) {
+        throw new IllegalArgumentException(
+            "La lista de películas no puede ser nula."
+        );
     }
+
+    for (Pelicula p : lista) {
+        insertar(p);
+    }
+}
 
     // =====================================
     // INSERTAR
@@ -121,6 +127,36 @@ public class ArbolBST {
         }
     }
 
+    // =====================================
+    // BÚSQUEDA PARCIAL POR TÍTULO
+    // Permite encontrar varias películas
+    // =====================================-------------------------------------------------------------------------------
+
+    public ArrayList<Pelicula> buscarPorCoincidencia(String texto) {
+
+        if (texto == null || texto.trim().isEmpty()) {
+            throw new IllegalArgumentException(
+                "Debe ingresar una palabra para buscar."
+            );
+        }
+
+        ArrayList<Pelicula> resultados = new ArrayList<>();
+
+        String palabra = texto.trim().toLowerCase();
+
+        // Recorrer todas las películas del árbol
+        for (Pelicula p : recorridoInorden()) {
+
+            String titulo = p.getTitulo().toLowerCase();
+
+            if (titulo.contains(palabra)) {
+                resultados.add(p);
+            }
+        }
+
+        return resultados;
+    }
+//---------------------------------------------------------------------------------------------------------------
     // =====================================
     // RECORRIDO IN-ORDEN
     // Devuelve las películas en orden alfabético

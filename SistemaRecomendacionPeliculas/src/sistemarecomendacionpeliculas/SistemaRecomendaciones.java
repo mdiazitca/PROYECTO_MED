@@ -29,10 +29,11 @@ public class SistemaRecomendaciones {
         }
 
         // Validar rating mínimo
-        if (ratingMinimo < 1 || ratingMinimo > 5) {
+        if (ratingMinimo < 1 || ratingMinimo > 10) {
             throw new IllegalArgumentException(
-                "El rating mínimo debe estar entre 1 y 5."
+                "El rating mínimo debe estar entre 1 y 10."
             );
+            
         }
 
         System.out.println("\n===== RECOMENDACIONES PARA "
@@ -96,4 +97,58 @@ public class SistemaRecomendaciones {
                 indice + 1
         );
     }
+    public ArrayList<Pelicula> obtenerRecomendaciones(
+        Usuario usuario,
+        ArbolBST arbol,
+        double ratingMinimo) {
+
+    if (usuario == null || arbol == null) {
+        throw new IllegalArgumentException(
+            "El usuario y el árbol no pueden ser nulos."
+        );
+    }
+
+    if (!Double.isFinite(ratingMinimo)
+            || ratingMinimo < 1 || ratingMinimo > 10) {
+        throw new IllegalArgumentException(
+            "El rating mínimo debe estar entre 1 y 10."
+        );
+    }
+//--------------------------------------------------------------------------------------------------------------------------
+    ArrayList<Pelicula> peliculas = arbol.recorridoInorden();
+
+    peliculas.sort((a, b) ->
+        Double.compare(b.getRating(), a.getRating()));
+
+    ArrayList<Pelicula> resultados = new ArrayList<>();
+
+    obtenerRecomendacionesRecursivo(
+        usuario, peliculas, ratingMinimo, 0, resultados);
+
+    return resultados;
+}
+
+private void obtenerRecomendacionesRecursivo(
+        Usuario usuario,
+        ArrayList<Pelicula> peliculas,
+        double ratingMinimo,
+        int indice,
+        ArrayList<Pelicula> resultados) {
+
+    if (indice >= peliculas.size()) {
+        return;
+    }
+
+    Pelicula pelicula = peliculas.get(indice);
+
+    if (usuario.prefiereGenero(pelicula.getGenero())
+            && !usuario.yaVio(pelicula)
+            && pelicula.getRating() >= ratingMinimo) {
+
+        resultados.add(pelicula);
+    }
+
+    obtenerRecomendacionesRecursivo(
+        usuario, peliculas, ratingMinimo, indice + 1, resultados);
+}
 }
