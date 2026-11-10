@@ -1,6 +1,7 @@
 
 package sistemarecomendacionpeliculas;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -83,13 +84,25 @@ public class Usuario {
             return false;
         }
 
+        String buscado = normalizar(genero);
+
         for (String g : generosPreferidos) {
-            if (g.equalsIgnoreCase(genero.trim())) {
+            if (normalizar(g).equals(buscado)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    // Quita tildes, espacios extra y mayúsculas para comparar géneros
+    // Ej.: "Animacion" y "Animación" se consideran el mismo género
+    private static String normalizar(String texto) {
+
+        String sinTildes = Normalizer.normalize(texto.trim(), Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+
+        return sinTildes.toLowerCase();
     }
 
     // =====================================
