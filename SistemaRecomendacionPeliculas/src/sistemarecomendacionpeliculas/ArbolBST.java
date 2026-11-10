@@ -178,6 +178,49 @@ public class ArbolBST {
         }
     }
 
+    // =====================================
+    // RECOMENDACIONES: RECORRIDO RECURSIVO
+    // Recorre el árbol (izquierda, nodo, derecha) y guarda
+    // las películas que cumplen el género preferido del
+    // usuario, que no ha visto y con rating mínimo.
+    // =====================================
+
+    public ArrayList<Pelicula> buscarRecomendaciones(
+            Usuario usuario, double ratingMinimo) {
+
+        ArrayList<Pelicula> resultados = new ArrayList<>();
+        recomendacionesRecursivo(raiz, usuario, ratingMinimo, resultados);
+        return resultados;
+    }
+
+    private void recomendacionesRecursivo(
+            NodoBST nodo,
+            Usuario usuario,
+            double ratingMinimo,
+            ArrayList<Pelicula> resultados) {
+
+        // Caso base: nodo vacío
+        if (nodo == null) {
+            return;
+        }
+
+        // Subárbol izquierdo
+        recomendacionesRecursivo(nodo.izquierdo, usuario, ratingMinimo, resultados);
+
+        // Nodo actual
+        Pelicula p = nodo.pelicula;
+
+        if (usuario.prefiereGenero(p.getGenero())
+                && !usuario.yaVio(p)
+                && p.getRating() >= ratingMinimo) {
+
+            resultados.add(p);
+        }
+
+        // Subárbol derecho
+        recomendacionesRecursivo(nodo.derecho, usuario, ratingMinimo, resultados);
+    }
+
     public void mostrarInorden() {
 
         if (estaVacio()) {

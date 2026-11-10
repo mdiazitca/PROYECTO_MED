@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 public class SistemaRecomendacionPeliculas {
 
+    // Archivo donde se guardan los usuarios
+    private static final String ARCHIVO_USUARIOS = "usuarios.txt";
+
     public static void main(String[] args) {
         System.setOut(new java.io.PrintStream(
                 new java.io.FileOutputStream(
@@ -67,19 +70,19 @@ public class SistemaRecomendacionPeliculas {
                                 "Drama", 2006, 4.7));
 
                 gestionPeliculas.agregarPelicula(
-                        new Pelicula(9, "Cenicineta", "Animacion", 2016, 7.3));
+                        new Pelicula(9, "Cenicienta", "Animación", 2016, 3.7));
 
                 gestionPeliculas.agregarPelicula(
-                        new Pelicula(10, "Cenicienta II", "Animacion", 2021, 6.3));
+                        new Pelicula(10, "Cenicienta II", "Animación", 2021, 3.2));
 
                 gestionPeliculas.agregarPelicula(
-                        new Pelicula(11, "Cenicienta III", "Animacion", 2025, 8.2));
+                        new Pelicula(11, "Cenicienta III", "Animación", 2025, 4.1));
 
                 gestionPeliculas.agregarPelicula(
-                        new Pelicula(12, "Bambi", "Animacion", 2025, 6.2));
+                        new Pelicula(12, "Bambi", "Animación", 2025, 3.1));
 
                 gestionPeliculas.agregarPelicula(
-                        new Pelicula(13, "Bambi II", "Animacion", 2025, 4.2));
+                        new Pelicula(13, "Bambi II", "Animación", 2025, 2.1));
 
                 archivoPeliculas.guardarPeliculas(
                         gestionPeliculas.getPeliculas(), nombreArchivo);
@@ -98,23 +101,49 @@ public class SistemaRecomendacionPeliculas {
         // =================================
         GestionUsuarios gestionUsuarios
                 = new GestionUsuarios();
+        ArchivoUsuarios archivoUsuarios = new ArchivoUsuarios();
 
-        Usuario u1 = new Usuario(1, "Ana");
-        Usuario u2 = new Usuario(2, "Carlos");
+        try {
 
-        u1.agregarGenero("Ciencia ficción");
-        u1.agregarGenero("Animación");
+            ArrayList<Usuario> usuariosGuardados
+                    = archivoUsuarios.cargarUsuarios(ARCHIVO_USUARIOS, gestionPeliculas);
 
-        u2.agregarGenero("Terror");
-        u2.agregarGenero("Drama");
+            if (!usuariosGuardados.isEmpty()) {
 
-        gestionUsuarios.agregarUsuario(u1);
-        gestionUsuarios.agregarUsuario(u2);
+                for (Usuario usuario : usuariosGuardados) {
+                    gestionUsuarios.agregarUsuario(usuario);
+                }
 
-        // Registrar película vista por Ana
-        u1.registrarPeliculaVista(
-                gestionPeliculas.buscarPorCodigo(1)
-        );
+                System.out.println("Usuarios cargados correctamente.");
+
+            } else {
+
+                // Primera ejecución: usuarios de ejemplo
+                Usuario u1 = new Usuario(1, "Ana");
+                Usuario u2 = new Usuario(2, "Carlos");
+
+                u1.agregarGenero("Ciencia ficción");
+                u1.agregarGenero("Animación");
+
+                u2.agregarGenero("Terror");
+                u2.agregarGenero("Drama");
+
+                gestionUsuarios.agregarUsuario(u1);
+                gestionUsuarios.agregarUsuario(u2);
+
+                // Registrar película vista por Ana
+                Pelicula vistaAna = gestionPeliculas.buscarPorCodigo(1);
+                if (vistaAna != null) {
+                    u1.registrarPeliculaVista(vistaAna);
+                }
+
+                guardarUsuarios(archivoUsuarios, gestionUsuarios);
+            }
+
+        } catch (java.io.IOException e) {
+
+            System.out.println("Error al cargar los usuarios: " + e.getMessage());
+        }
 
         // =================================
         // CREAR ÁRBOL BST
@@ -194,7 +223,7 @@ public class SistemaRecomendacionPeliculas {
 
                             int anio = leerEntero(sc, "Año: ");
 
-                            double rating = leerDouble(sc, "Rating (1 a 10): ");
+                            double rating = leerDouble(sc, "Rating (1 a 5): ");
 
                             Pelicula nueva = new Pelicula(
                                     codigo, titulo, genero, anio, rating
@@ -257,7 +286,13 @@ public class SistemaRecomendacionPeliculas {
 
                     try {
 
-                        int id = leerEntero(sc, "ID del usuario: ");
+                        int ultimoId
+                                = gestionUsuarios.obtenerUltimoIdUtilizado();
+
+                        System.out.println("\nÚltimo ID utilizado: " + ultimoId
+                                + " (sugerido: " + (ultimoId + 1) + ")");
+
+                        int id = leerEntero(sc, "ID del nuevo usuario: ");
 
                         System.out.print("Nombre: ");
                         String nombre = sc.nextLine();
@@ -286,6 +321,8 @@ public class SistemaRecomendacionPeliculas {
                         System.out.println(
                                 "Usuario registrado correctamente."
                         );
+
+                        guardarUsuarios(archivoUsuarios, gestionUsuarios);
 
                     } catch (IllegalArgumentException e) {
 
@@ -330,7 +367,8 @@ public class SistemaRecomendacionPeliculas {
 
                     int codigoBuscar = leerEntero(sc, "Ingrese el código de la película: ");
 
-                    Pelicula encontrada = gestionPeliculas.buscarPorCodigo(codigoBuscar);
+                    // Búsqueda binaria: ordena por código y luego busca
+                    Pelicula encontrada = gestionPeliculas.buscarPorCodigoBinaria(codigoBuscar);
 
                     if (encontrada != null) {
 
@@ -361,19 +399,33 @@ public class SistemaRecomendacionPeliculas {
 
                     try {
 
+                        // Búsqueda exacta en el árbol BST (recursiva)
+                        Pelicula exacta = arbol.buscarPorTitulo(texto);
+
+                        System.out.println("\nPelícula encontrada en el BST:");
+
+                        ArrayList<Pelicula> resultadoExacto = new ArrayList<>();
+                        resultadoExacto.add(exacta);
+
+                        gestionPeliculas.mostrarPeliculasEnTabla(resultadoExacto);
+
+                    } catch (PeliculaNoEncontradaException e) {
+
+                        // Si no hay título exacto, se buscan coincidencias parciales
+                        System.out.println(e.getMessage());
+
                         ArrayList<Pelicula> resultados
                                 = arbol.buscarPorCoincidencia(texto);
 
                         if (resultados.isEmpty()) {
 
-                            System.out.println("No se encontraron películas.");
+                            System.out.println("Tampoco hay títulos que contengan ese texto.");
 
                         } else {
 
-                            System.out.println("\nPelículas encontradas:");
+                            System.out.println("\nTítulos que contienen \"" + texto.trim() + "\":");
 
                             gestionPeliculas.mostrarPeliculasEnTabla(resultados);
-
                         }
 
                     } catch (IllegalArgumentException e) {
@@ -423,6 +475,8 @@ public class SistemaRecomendacionPeliculas {
                         System.out.println(
                                 "Película agregada a la lista por ver."
                         );
+
+                        guardarUsuarios(archivoUsuarios, gestionUsuarios);
 
                     } catch (IllegalArgumentException e) {
 
@@ -507,6 +561,8 @@ public class SistemaRecomendacionPeliculas {
                         );
 
                         System.out.println(siguiente);
+
+                        guardarUsuarios(archivoUsuarios, gestionUsuarios);
                     }
 
                     break;
@@ -551,6 +607,8 @@ public class SistemaRecomendacionPeliculas {
                         System.out.println(
                                 "Película agregada al historial."
                         );
+
+                        guardarUsuarios(archivoUsuarios, gestionUsuarios);
 
                     } catch (IllegalArgumentException e) {
 
@@ -621,7 +679,7 @@ public class SistemaRecomendacionPeliculas {
                     }
 
                     double minimo
-                            = leerDouble(sc, "Rating mínimo (1 a 10): ");
+                            = leerDouble(sc, "Rating mínimo (1 a 5): ");
 
                     try {
 
@@ -664,6 +722,25 @@ public class SistemaRecomendacionPeliculas {
         } while (opcion != 15);
 
         sc.close();
+    }
+
+    // =================================
+    // GUARDAR USUARIOS EN EL ARCHIVO
+    // Se llama cada vez que cambia un usuario, su cola o su historial
+    // =================================
+    public static void guardarUsuarios(
+            ArchivoUsuarios archivo, GestionUsuarios gestion) {
+
+        try {
+
+            archivo.guardarUsuarios(gestion.getUsuarios(), ARCHIVO_USUARIOS);
+
+        } catch (java.io.IOException e) {
+
+            System.out.println(
+                    "Error al guardar los usuarios: " + e.getMessage()
+            );
+        }
     }
 
     // =================================

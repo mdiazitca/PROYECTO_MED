@@ -53,10 +53,10 @@ public class Pelicula {
 
   public void setRating(double rating) {
 
-    if (!Double.isFinite(rating) || rating < 1 || rating > 10) {
+    if (!Double.isFinite(rating) || rating < 1 || rating > 5) {
 
         throw new IllegalArgumentException(
-            "El rating debe ser un número entre 1 y 10."
+            "El rating debe ser un número entre 1 y 5."
         );
     }
 
