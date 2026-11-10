@@ -64,6 +64,21 @@
             return null;
         }
 
+        // Obtener el último ID utilizado
+        public int obtenerUltimoIdUtilizado() {
+
+            int ultimoId = 0;
+
+            for (Usuario u : usuarios) {
+
+                if (u.getId() > ultimoId) {
+                    ultimoId = u.getId();
+                }
+            }
+
+            return ultimoId;
+        }
+
         // Obtener lista de usuarios
         public ArrayList<Usuario> getUsuarios() {
         return new ArrayList<>(usuarios);

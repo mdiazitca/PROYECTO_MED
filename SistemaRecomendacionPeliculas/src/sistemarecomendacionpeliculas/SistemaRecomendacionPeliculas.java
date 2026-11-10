@@ -257,7 +257,13 @@ public class SistemaRecomendacionPeliculas {
 
                     try {
 
-                        int id = leerEntero(sc, "ID del usuario: ");
+                        int ultimoId
+                                = gestionUsuarios.obtenerUltimoIdUtilizado();
+
+                        System.out.println("\nÚltimo ID utilizado: " + ultimoId
+                                + " (sugerido: " + (ultimoId + 1) + ")");
+
+                        int id = leerEntero(sc, "ID del nuevo usuario: ");
 
                         System.out.print("Nombre: ");
                         String nombre = sc.nextLine();
